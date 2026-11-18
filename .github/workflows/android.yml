@@ -36,10 +36,15 @@ jobs:
           echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
           echo "Found project at $PROJECT_DIR"
 
-      - name: Build debug APK
+      - name: Fix JVM target compatibility
         run: |
-          cd "$PROJECT_DIR"
-          gradle assembleDebug
+          FILE="$PROJECT_DIR/app/build.gradle.kts"
+          sed -i '/android {/a\    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }' "$FILE"
+          if grep -q 'kotlinOptions {' "$FILE"; then
+            sed -i '/kotlinOptions {/a\        jvmTarget = "17"' "$FILE"
+          else
+            sed -i '/android {/a\    kotlinOptions {\n        jvmTarget = "17"\n    }' "$FILE"
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
