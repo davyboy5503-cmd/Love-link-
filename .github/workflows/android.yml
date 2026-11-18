@@ -46,9 +46,9 @@ jobs:
             sed -i '/android {/a\    kotlinOptions {\n        jvmTarget = "17"\n    }' "$FILE"
           fi
 
-         - name: Upload APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: LoveLink-APK
-          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk
+          path: "**/app/build/outputs/apk/debug/*.apk"
           if-no-files-found: error
